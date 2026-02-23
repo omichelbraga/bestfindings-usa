@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Etsy Authorization</title>
+    <style>
+        body { font-family: -apple-system, sans-serif; background: #1a1a2e; color: #eee; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 40px; max-width: 600px; text-align: center; backdrop-filter: blur(10px); }
+        h1 { color: #c9a84c; }
+        .code-box { background: #111; border: 1px solid #333; border-radius: 8px; padding: 16px; margin: 20px 0; word-break: break-all; font-family: monospace; font-size: 14px; user-select: all; }
+        .url-box { background: #0a1628; border: 1px solid #1a3a5c; border-radius: 8px; padding: 16px; margin: 20px 0; word-break: break-all; font-family: monospace; font-size: 12px; user-select: all; color: #7ab8ff; }
+        .success { color: #4ade80; }
+        .error { color: #f87171; }
+        button { background: #c9a84c; color: #1a1a2e; border: none; padding: 12px 24px; border-radius: 8px; font-size: 16px; cursor: pointer; font-weight: bold; }
+        button:hover { background: #dabb6a; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>🔑 Etsy Authorization</h1>
+        <div id="content"></div>
+    </div>
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const code = params.get('code');
+        const state = params.get('state');
+        const error = params.get('error');
+        const el = document.getElementById('content');
+        
+        if (error) {
+            el.innerHTML = `<p class="error">❌ Authorization failed: ${error}</p>`;
+        } else if (code) {
+            const fullUrl = window.location.href;
+            el.innerHTML = `
+                <p class="success">✅ Authorization successful!</p>
+                <p>Copy this <strong>full URL</strong> and send it to Son of Anton:</p>
+                <div class="url-box" id="url">${fullUrl}</div>
+                <button onclick="navigator.clipboard.writeText(document.getElementById('url').textContent).then(()=>this.textContent='Copied! ✅')">Copy Full URL</button>
+                <p style="margin-top:20px;color:#888;font-size:12px;">State: ${state}<br>Code: ${code.substring(0,20)}...</p>
+            `;
+        } else {
+            el.innerHTML = `<p class="error">No authorization code received. Please try the OAuth flow again.</p>`;
+        }
+    </script>
+</body>
+</html>
